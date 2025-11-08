@@ -1,12 +1,623 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Конструктор продуктовых кейсов</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Manrope:wght@400;600;700&family=PT+Serif:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: light dark;
+            --bg-primary: #f4f6fb;
+            --bg-panel: rgba(255, 255, 255, 0.78);
+            --border-color: rgba(15, 23, 42, 0.08);
+            --accent: #6366f1;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --radius-lg: 24px;
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(160deg, #f4f6fb 0%, #eef2ff 40%, #fdf2f8 100%);
+            display: flex;
+            justify-content: center;
+            padding: clamp(1.5rem, 3vw, 3rem);
+        }
+
+        main {
+            width: min(1200px, 100%);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(1.5rem, 2vw, 2.5rem);
+        }
+
+        .card {
+            background: var(--bg-panel);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 30px 60px rgba(99, 102, 241, 0.12);
+            backdrop-filter: blur(8px);
+        }
+
+        header.card {
+            padding: clamp(1.75rem, 3vw, 2.25rem) clamp(1.75rem, 3vw, 2.75rem);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: clamp(1.8rem, 3vw, 2.4rem);
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        header p {
+            margin: 0.75rem 0 0;
+            color: var(--text-secondary);
+            max-width: 60ch;
+            font-size: 1.02rem;
+        }
+
+        .layout {
+            display: grid;
+            gap: clamp(1.5rem, 2vw, 2rem);
+            grid-template-columns: 1fr min(420px, 100%);
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(1.25rem, 2vw, 1.75rem);
+            padding: clamp(1.5rem, 2vw, 2rem);
+        }
+
+        .panel__section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .panel__section h2 {
+            margin: 0;
+            font-size: 1.15rem;
+            color: #1f2937;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .field label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .field input[type="text"],
+        .field select,
+        .field textarea {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.65rem 0.85rem;
+            font: inherit;
+            background: rgba(255, 255, 255, 0.85);
+            resize: vertical;
+        }
+
+        .field textarea {
+            min-height: 110px;
+        }
+
+        .dropzone {
+            position: relative;
+            border: 1px dashed rgba(99, 102, 241, 0.35);
+            border-radius: 14px;
+            background: rgba(99, 102, 241, 0.06);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .dropzone.has-image {
+            padding: 0.75rem;
+            background: rgba(15, 23, 42, 0.04);
+            border-style: solid;
+        }
+
+        .dropzone.is-dragover {
+            border-color: var(--accent);
+            background: rgba(99, 102, 241, 0.12);
+            color: var(--accent);
+        }
+
+        .dropzone button {
+            align-self: center;
+        }
+
+        .dropzone__preview {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 18px 32px rgba(15, 23, 42, 0.08);
+            object-fit: cover;
+        }
+
+        .dropzone__footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+
+        .field small {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .link-button {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .link-button:disabled {
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .blocks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+        }
+
+        .block-card {
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 1rem;
+            background: rgba(248, 250, 252, 0.8);
+            display: grid;
+            gap: 0.9rem;
+        }
+
+        .block-card__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+
+        .block-card__title {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 600;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            background: rgba(99, 102, 241, 0.1);
+            color: #4c1d95;
+        }
+
+        .block-actions {
+            display: inline-flex;
+            gap: 0.45rem;
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            background: rgba(99, 102, 241, 0.12);
+            color: #4338ca;
+            padding: 0.5rem 0.75rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        button:hover {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .block-card__fields {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .inline-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .inline-grid--two {
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        }
+
+        .preview {
+            background: radial-gradient(circle at top left, rgba(99, 102, 241, 0.1), transparent 55%), #fff;
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .preview__toolbar {
+            padding: 1.1rem 1.4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+            background: rgba(248, 250, 252, 0.72);
+            backdrop-filter: blur(6px);
+        }
+
+        .preview__meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .preview__meta span {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .preview__meta strong {
+            font-size: 1.05rem;
+        }
+
+        .preview__body {
+            flex: 1;
+            overflow-y: auto;
+            padding: clamp(1.2rem, 3vw, 2rem);
+            display: grid;
+            gap: 1.4rem;
+            font-family: var(--preview-font, 'Inter');
+        }
+
+        .preview[data-theme="dark"] {
+            background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.95));
+            color: #f8fafc;
+        }
+
+        .preview[data-theme="dark"] .preview__toolbar {
+            background: rgba(15, 23, 42, 0.75);
+            border-bottom-color: rgba(148, 163, 184, 0.18);
+        }
+
+        .preview[data-theme="dark"] .preview__body {
+            color: inherit;
+        }
+
+        .preview-hero {
+            display: grid;
+            gap: 0.65rem;
+        }
+
+        .preview-hero h2 {
+            margin: 0;
+            font-size: clamp(1.6rem, 3vw, 2.1rem);
+        }
+
+        .preview-summary {
+            line-height: 1.6;
+            color: inherit;
+        }
+
+        .preview-blocks {
+            display: grid;
+            gap: 1.4rem;
+        }
+
+        .preview-block {
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 1.2rem;
+            display: grid;
+            gap: 1rem;
+            border: 1px solid rgba(226, 232, 240, 0.7);
+        }
+
+        .preview[data-theme="dark"] .preview-block {
+            background: rgba(15, 23, 42, 0.65);
+            border-color: rgba(148, 163, 184, 0.3);
+        }
+
+        .preview-block__title {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .preview-block__title span {
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(71, 85, 105, 0.9);
+        }
+
+        .preview[data-theme="dark"] .preview-block__title span {
+            color: rgba(226, 232, 240, 0.7);
+        }
+
+        .preview-block__image {
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            object-fit: cover;
+            max-height: 240px;
+        }
+
+        .preview-stats {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            gap: 0.65rem;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+        }
+
+        .stat-card {
+            padding: 0.85rem 1rem;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            display: grid;
+            gap: 0.3rem;
+        }
+
+        .stat-card strong {
+            font-size: 1.2rem;
+        }
+
+        .preview[data-theme="dark"] .stat-card {
+            background: rgba(15, 23, 42, 0.65);
+            border-color: rgba(148, 163, 184, 0.3);
+        }
+
+        .publish-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .publish-actions button.copy {
+            background: rgba(52, 211, 153, 0.18);
+            color: #047857;
+        }
+
+        .publish-actions button.copy:hover {
+            background: rgba(52, 211, 153, 0.28);
+        }
+
+        .publish-status {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-placeholder {
+            border: 1px dashed rgba(148, 163, 184, 0.6);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            color: rgba(100, 116, 139, 0.9);
+        }
+
+        @media (max-width: 1080px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+
+            .block-card__header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .block-actions {
+                align-self: stretch;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello!</h1>
-    <script src="/app.js"></script>
+    <main>
+        <header class="card">
+            <h1>Конструктор продуктовых кейсов</h1>
+            <p>Соберите лендинг кейса за 20 минут: опишите проект, настройте блоки с изображениями и автотекстом, выберите тему и опубликуйте результат по уникальной ссылке.</p>
+        </header>
+
+        <section class="layout">
+            <section class="panel card" aria-labelledby="project-settings">
+                <div class="panel__section">
+                    <h2 id="project-settings">Информация о проекте</h2>
+                    <div class="field">
+                        <label for="project-title">Название кейса *</label>
+                        <input id="project-title" name="project-title" type="text" placeholder="Например, Onboarding для мобильного банка" maxlength="80" required>
+                    </div>
+                    <div class="inline-grid inline-grid--two">
+                        <div class="field">
+                            <label for="project-type">Тип проекта *</label>
+                            <select id="project-type" name="project-type" required>
+                                <option value="">Выберите тип</option>
+                                <option>App</option>
+                                <option>Web</option>
+                                <option>Landing</option>
+                                <option>Feature</option>
+                                <option>Custom</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="project-summary">Краткое описание</label>
+                            <textarea id="project-summary" name="project-summary" maxlength="900" placeholder="Опишите задачи, метрики успеха и ключевые решения"></textarea>
+                            <small id="summary-counter" aria-live="polite">0 / 900</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel__section">
+                    <h2>Блоки кейса</h2>
+                    <div class="blocks-list" id="blocks-list" aria-live="polite"></div>
+                    <button type="button" id="add-block">Добавить блок</button>
+                </div>
+
+                <div class="panel__section">
+                    <h2>Оформление и публикация</h2>
+                    <div class="inline-grid inline-grid--two">
+                        <div class="field">
+                            <label for="theme-select">Тема</label>
+                            <select id="theme-select">
+                                <option value="light">Светлая</option>
+                                <option value="dark">Тёмная</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="font-select">Базовый шрифт</label>
+                            <select id="font-select">
+                                <option value="Inter">Inter</option>
+                                <option value="Manrope">Manrope</option>
+                                <option value="PT Serif">PT Serif</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="inline-grid inline-grid--two">
+                        <div class="field">
+                            <label for="seo-description">SEO-описание</label>
+                            <textarea id="seo-description" placeholder="Текст для поисковых систем (до 160 символов)"></textarea>
+                        </div>
+                        <div class="field">
+                            <label for="og-title">OG-превью</label>
+                            <input id="og-title" type="text" maxlength="120" placeholder="Заголовок для соцсетей">
+                        </div>
+                    </div>
+                    <div class="publish-actions">
+                        <button type="button" id="publish">Опубликовать</button>
+                        <button type="button" id="copy-link" class="copy" disabled>Скопировать ссылку</button>
+                        <span id="publish-status" class="publish-status" role="status" aria-live="polite"></span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="preview card" id="preview" aria-live="polite" data-theme="light">
+                <div class="preview__toolbar">
+                    <div class="preview__meta">
+                        <strong id="preview-url">case.example/новый-кейс</strong>
+                        <span id="preview-meta">Черновик • тема: светлая • шрифт: Inter</span>
+                    </div>
+                    <div class="preview__stats" id="preview-counters" hidden>
+                        <small>Просмотры: <span data-stat="views">0</span> · Копирования: <span data-stat="copies">0</span> · Открытия: <span data-stat="opens">0</span></small>
+                    </div>
+                </div>
+                <div class="preview__body" id="preview-body">
+                    <div class="empty-placeholder">Заполните данные проекта и блоки, чтобы увидеть превью лендинга.</div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <template id="block-template">
+        <article class="block-card" data-block>
+            <div class="block-card__header">
+                <div class="block-card__title">
+                    <span class="badge" data-block-index></span>
+                    <span data-block-name>Новый блок</span>
+                </div>
+                <div class="block-actions">
+                    <button type="button" data-action="move-up" aria-label="Выше">▲</button>
+                    <button type="button" data-action="move-down" aria-label="Ниже">▼</button>
+                    <button type="button" data-action="remove" aria-label="Удалить">Удалить</button>
+                </div>
+            </div>
+            <div class="block-card__fields">
+                <div class="field">
+                    <label>Название блока *</label>
+                    <input type="text" data-field="title" placeholder="Например, Главный экран" required>
+                </div>
+                <div class="field">
+                    <label>Функция / роль *</label>
+                    <textarea data-field="role" placeholder="Что делает этот блок и зачем он пользователю" required></textarea>
+                </div>
+                <div class="inline-grid inline-grid--two">
+                    <div class="field">
+                        <label>Изображение *</label>
+                        <div class="dropzone" data-dropzone tabindex="0" role="button" aria-label="Загрузить изображение для блока">
+                            <input type="file" accept="image/png,image/jpeg,image/webp" data-field="image" hidden>
+                            <img data-image-preview class="dropzone__preview" alt="Превью изображения блока" hidden>
+                            <div data-dropzone-content>
+                                <strong>Перетащите mockup</strong>
+                                <span>или выберите файл вручную</span>
+                                <button type="button" data-action="upload">Загрузить файл</button>
+                            </div>
+                        </div>
+                        <div class="dropzone__footer">
+                            <small data-image-hint>Поддерживаемые форматы: PNG, JPG, WebP</small>
+                            <button type="button" class="link-button" data-action="clear-image" hidden>Удалить</button>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Автотекст</label>
+                        <textarea data-field="autotext" placeholder="Сгенерированное описание"></textarea>
+                        <button type="button" data-action="generate">Сгенерировать</button>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </template>
+
+    <template id="preview-block-template">
+        <article class="preview-block">
+            <div class="preview-block__title">
+                <span>Блок</span>
+                <h3 data-preview-title></h3>
+            </div>
+            <p data-preview-role></p>
+            <img data-preview-image class="preview-block__image" alt="Визуализация блока" hidden>
+            <p data-preview-autotext></p>
+        </article>
+    </template>
+
+    <script src="./app.js" type="module"></script>
 </body>
 </html>
