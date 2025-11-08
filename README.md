@@ -10,12 +10,15 @@ This repository contains a single-page prototype built with plain HTML, CSS, and
 ## Launching the Prototype
 
 1. Clone or download the repository to your machine.
-2. From the project root, start a static server (choose one):
-   - `npx serve .`
-   - `python3 -m http.server 4173`
-   - Use an IDE-integrated static server.
+2. From the project root, launch the built-in server (choose one):
+   - **Node:** `npm start` (runs `node server.js` on port `4173`).
+   - **Python:** `python3 -m http.server 4173`.
+   - **npx serve:** `npx serve .` (requires Node.js).
+   - **IDE:** Use an IDE-integrated static server.
 3. Visit the served URL in your browser (e.g., `http://localhost:4173/app.html`).
 4. If you prefer to open the file directly without a server, double-click `app.html`. Drag-and-drop uploads continue to work, but some browsers block local file previews—use the server option if previews fail to render.
+
+> ✅ Want to check the server script quickly? Run `node server.js --check` to ensure the runtime is available without starting the listener.
 
 ## Quick Functionality Walkthrough
 
